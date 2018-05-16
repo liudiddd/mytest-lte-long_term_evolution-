@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adee.mybatis.mappers.StudentMapper">
+	
+	<resultMap type="Student" id="StudentResult">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="age" column="age"/>
+	</resultMap>
+	
+	
+	<select id="searchStudents" parameterType="Map" resultMap="StudentResult">
+		select * from t_student
+		<!-- 不要使用where 1=1，性能不好 -->
+		<where> <!-- where标签会自动加，自动去除第一个and -->
+			<if test="gradeId != null">
+				and gradeId=#{gradeId}
+			</if>
+			<if test="name != null ">
+				and name like #{name}
+			</if>
+			<if test="age != null">
+				and age=#{age}
+			</if>
+		</where>
+	</select>
+	
+	<!--比<where>标签 更加灵活的写法：<trim>标签-->
+	<select id="searchStudents1" parameterType="Map" resultMap="StudentResult">
+		select * from t_student
+		<!-- 当trim标签内不为空时，前面加上where，如果首个条件以and或or开头，那么去除and或or -->
+		<trim prefix="where" prefixOverrides="and|or"> 
+			<if test="gradeId != null">
+				and gradeId=#{gradeId}
+			</if>
+			<if test="name != null ">
+				and name like #{name}
+			</if>
+			<if test="age != null">
+				and age=#{age}
+			</if>
+		</trim>
+	</select>
+	
+	
+	<select id="searchStudents2" parameterType="Map" resultMap="StudentResult">
+		select * from t_student
+		<choose>
+			<when test="searchBy=='gradeId'">
+				where gradeId=#{gradeId}
+			</when>
+			<when test="searchBy=='name'">
+				where name=#{name}
+			</when>
+			<otherwise>
+				where age=#{age}
+			</otherwise>
+		</choose>
+	</select>
+	
+	<!-- in -->
+	<select id="searchStudents3" parameterType="Map" resultMap="StudentResult">
+		select * from t_student
+		<if test="gradeIds != null">
+			<where>
+				gradeId in
+				<foreach collection="gradeIds" item="gradeId" index="index" open="(" separator="," close=")">#{gradeId}</foreach>
+			</where>
+		</if>
+	</select>
+	
+	<update id="updateStudent" parameterType="Student">
+		update t_student
+		<!-- set标签会在其内容不为空时自动加上，并且将最后一个逗号去掉 -->
+		<set>
+			<if test="name != null">
+				name=#{name},
+			</if>
+			<if test="age != null">
+				age=#{age},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	
+	<insert id="insertStudent" parameterType="Student">
+		insert into t_student id, name, age, addressId, gradeId, pic, remark
+		values (#{id}, #{name}, #{age}, #{addressId}, #{gradeId}, #{pic}, #{remark})
+	</insert>
+	
+</mapper> 

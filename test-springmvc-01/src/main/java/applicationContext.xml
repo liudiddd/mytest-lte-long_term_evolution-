@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!-- 
+	关于spring xsd：
+	1.<beans />标签中xmlns:xxx是给各个命名空间取的别名，每个xml命名空间下存放xsd文件
+	2.xmlns为默认的xml命名空间
+	3.xmlns:aop="http://www.springframework.org/schema/aop"  
+		声明一个前缀为aop的命名空间，后面的url唯一作用是赋予命名空间一个唯一的名称
+	4.xsi:schemaLocation="  
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+		以上配置的意思是，将已声明的xmlns关联到具体的xsd文件。xmlns必须先声明，然后才能关联到具体的xsd文件。
+	5.所以，当我们需要什么样的xsd的时候，就先声明xmlns，然后利用xsi:schemaLocation将其关联到指定的xsd就可以了。
+	6.当spring启动的时候，首先要检查springContext.xml配置文件中的配置是否符合spring自己的xsd所定义的标准，如果配置文件中
+		所写的标签没有在声明的xsd中找到的话，spring启动会失败。那么spring启动的时候如何去找所声明的xsd文件呢？
+	7.比如，我们在springContext.xml中声明了http://www.springframework.org/schema/context/spring-context-4.0.xsd  这个
+		xsd文件，spring会在自己的jar包中的META-INF/spring.schemas文件中查找映射，部分内容如下：
+			http\://www.springframework.org/schema/context/spring-context-2.5.xsd=org/springframework/context/config/spring-context-2.5.xsd
+			http\://www.springframework.org/schema/context/spring-context-3.0.xsd=org/springframework/context/config/spring-context-3.0.xsd
+			http\://www.springframework.org/schema/context/spring-context-3.1.xsd=org/springframework/context/config/spring-context-3.1.xsd
+			http\://www.springframework.org/schema/context/spring-context-3.2.xsd=org/springframework/context/config/spring-context-3.2.xsd
+			http\://www.springframework.org/schema/context/spring-context-4.0.xsd=org/springframework/context/config/spring-context-4.0.xsd
+			http\://www.springframework.org/schema/context/spring-context-4.1.xsd=org/springframework/context/config/spring-context-4.1.xsd
+			http\://www.springframework.org/schema/context/spring-context-4.2.xsd=org/springframework/context/config/spring-context-4.2.xsd
+			http\://www.springframework.org/schema/context/spring-context-4.3.xsd=org/springframework/context/config/spring-context-4.3.xsd
+		找到了对应的映射目录：org/springframework/context/config/spring-context-4.0.xsd
+		我们要找的xsd文件就是当前jar包下的org/springframework/context/config/spring-context-4.0.xsd文件了
+		xsd文件中声明了xml中可用的标签格式。
+	8.但是，如果再spring.schema文件中没有找到映射呢？那么，就会从映射key所示的url下载该xsd文件，如果下载失败，那么启动失败。
+	9.以上说的是spring启动的过程。但是在eclipse开发的时候，怎样在springContext.xml中让eclipse自动提示所声明xsd文件中的标签
+	格式呢？首先，eclipse要能够找到所声明的xsd文件，通过以下配置，eclipse就能找到xsd文件了：
+		- spring中的xsd放在jar包中，要先把jar包中的xsd拷贝出来放到一个目录下
+		- 然后Window->preference->XML->XML Catalog下，将key，也就是 http\://www.springframework.org/schema/context/spring-context-4.0.xsd
+			填到key中，Location中选择刚刚从jar包中copy出来的xsd文件，保存后即可提示。
+			
+ -->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns="http://www.springframework.org/schema/beans"   
+    xmlns:aop="http://www.springframework.org/schema/aop"  
+    xmlns:context="http://www.springframework.org/schema/context"   
+    xmlns:tx="http://www.springframework.org/schema/tx"  
+    xmlns:cache="http://www.springframework.org/schema/cache"   
+    xmlns:p="http://www.springframework.org/schema/p"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans   
+     http://www.springframework.org/schema/beans/spring-beans-4.3.xsd  
+     http://www.springframework.org/schema/aop  
+     http://www.springframework.org/schema/aop/spring-aop-4.3.xsd  
+     http://www.springframework.org/schema/context  
+     http://www.springframework.org/schema/context/spring-context-4.3.xsd  
+     http://www.springframework.org/schema/tx  
+     http://www.springframework.org/schema/tx/spring-tx-4.3.xsd  
+     http://www.springframework.org/schema/cache   
+     http://www.springframework.org/schema/cache/spring-cache-4.3.xsd">  
+  	
+  	
+  	<!-- 通过反射调用无参构造方法创建bean -->
+    <bean id="helloWorld" class="com.adee.spring4.HelloWorld" scope="prototype" >
+    	<property name="name">
+    		<value><![CDATA[Ja<ck]]></value>
+    	</property>
+    </bean>
+    
+    <!-- 
+    	通过构造方法注入属性
+    	有循环依赖的问题，不推荐使用 
+    -->
+    <!-- <bean id="helloWorld1" class="com.adee.spring4.HelloWorld1">
+    	<constructor-arg name="name" value="Jackson" />
+    	<constructor-arg name="age" value="16" />
+    	<constructor-arg name="hw2" value="helloWorld2" />
+    </bean> -->
+    
+    <!-- 测试构造方法注入属性的循环依赖问题 -->
+    <!-- <bean id="helloWorld2" class="com.adee.spring4.HelloWorld2">
+    	<constructor-arg name="hw1" ref="helloWorld1"/>
+    </bean> -->
+    
+    <!-- setter方法属性注入不会有循环依赖的问题  -->
+    <bean id="helloWorld3" class="com.adee.spring4.HelloWorld3">
+    	<property name="hw4" ref="helloWorld4"></property>
+    </bean>
+    <bean id="helloWorld4" class="com.adee.spring4.HelloWorld4">
+    	<property name="hw3" ref="helloWorld3"></property>
+    </bean>
+    
+    <!-- 
+    	bean配置的继承  
+    	1.Spring允许继承bean的配置，被继承的bean称为父bean，继承这个父bean的bean称为子bean。
+    	2.子bean从父bean继承配置，包括class、property等属性，子bean也可以覆盖从父bean继承过来的属性。
+    	3.父bean可以作为模板（通过设置abstract=true将父bean声明为模板，不生成bean实例，其class既可以是抽象类，也可以是非抽象类），
+    	也可以作为bean实例。
+    	4.并不是父bean的所有属性都被继承，比如autowire、abstract等。
+    	5.父bean也可以忽略class属性，让子bean指定自己的class，而共享相同的property配置，但此时abstract必须设为true。
+    -->
+    <bean id="hw5" abstract="true">
+    	<property name="name" value="Rose" />
+    </bean>
+    <bean id="hw51"  class="com.adee.spring4.HelloWorld5" parent="hw5"></bean>
+    
+    <!-- 
+    	bean的scope属性
+    	默认为singleton
+    	prototype：每次getBean都返回一个新创建的对象，比如在struts2中的action就配置为prototype
+     -->
+    <bean id="hw6" class="com.adee.spring4.HelloWorld6" scope="singleton"></bean>
+    <bean id="hw61" class="com.adee.spring4.HelloWorld6" scope="prototype"></bean>
+    
+    <!-- 
+    	引入外部配置文件 
+    	比如datasource.properties
+    	Spring提供了一个PropertyPlaceHolderConfigurer的BeanFactory后置处理器。这个后置处理器允许用户将bean配置的部分内容
+    	外移到properties文件中。可以在bean配置文件里使用${var}的变量。PropertyPlaceHolderConfigurer从properties文件里加载
+    	属性，并使用这些属性来替换变量。
+    	如何使用呢？
+    	1.在spring2.0中需要配置如下bean：
+    		<bean class="org.springframework.beans.factory.config.PropertyPlaceHolderConfigurer">
+    			<property name="location" value="classpath:jdbc.properties" />
+    		</bean>
+    	 2.在spring2.5之后，如下配置：
+    	 	<context:property-placeholder location="classpath:jdbc.properties" />
+    	 	
+    	 注：方式2配置简单，但是如果想自己实现另外的属性加载来源（比如从数据库加载），只能使用方式1
+    -->
+    <!-- 方式1 -->
+    <context:property-placeholder location="classpath:jdbc.properties" />
+    <!-- 方式2 -->
+	<!-- <bean class="com.adee.spring4.MyPropertyPlaceHolderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:jdbc.dev.properties</value>
+				<value>classpath:jdbc.properties</value>
+			</list>
+		</property>
+	</bean> -->
+	
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+    	<property name="user" value="${jdbc.username}"></property>
+    	<property name="password" value="${jdbc.password}"></property>
+    	<property name="driverClass" value="${jdbc.driverClassName}"></property>
+    	<property name="jdbcUrl" value="${jdbc.url}"></property>
+    	<property name="initialPoolSize" value="${jdbc.initialPoolSize}"></property>
+    	<property name="maxPoolSize" value="${jdbc.maxPoolSize}"></property>
+    </bean>
+    
+    <!-- 
+    	IOC容器中bean的声明周期：
+    	1.spring允许在bean声明周期的特定点执行定制的任务
+    	2.spring IOC容器对bean的声明周期进行管理的过程：
+    		- 通过构造器或工厂方法创建bean实例
+    		- 为bean的属性设置值或其他bean的引用
+    		- 调用bean的初始化方法
+    		- bean可以使用了
+    		- 当容器关闭时，调用bean的销毁方法
+    	3.在bean的声明里面设置init-method和destroy-method属性时，为bean指定初始化和销毁方法
+    	4.另外一种方式：	bean类实现InitializingBean接口，实现afterPropertiesSet方法，相当于初始化方法
+    									实现DisposableBean接口的destroy方法，在bean被容器销毁前执行
+     -->
+     <bean id="hw7" class="com.adee.spring4.HelloWorld7" init-method="init" destroy-method="destroy" ></bean>
+     <bean id="hw8" class="com.adee.spring4.HelloWorld8" ></bean> <!-- 开发中使用此方式，应为destroy-method方式有时候不生效，原因应该是容器没有销毁 -->
+     
+     <!-- 
+     	bean后置处理器：
+     	1.bean后置处理器允许在bean调用初始化方法前后对bean进行额外的处理
+     	2.bean后置处理器对IOC容器里面的所有bean实例逐一处理，而非单一实例，其典型应用是：检查bean属性的正确性或根据特定的
+     		标准更改bean的属性
+     	3.对bean后置处理器而言，需要实现BeanPostProcessor接口，在初始化方法调用前后，spring将把每个bean实例分别传递给上述
+     		接口的以下两个方法：postProcessBeforeInitialization、postProcessAfterInitialization
+      -->
+     <bean id="myBeanPostProcessor" class="com.adee.spring4.MyBeanPostProcessor"></bean>
+     
+     <!-- 
+     	通过静态工厂方法创建bean
+     	注意：不是Factory实例，而是Car实例
+      -->
+     <bean id="car1" class="com.adee.spring4.StaticCarFactory" factory-method="getCar">
+     	<constructor-arg value="audi"/>
+     </bean>
+     
+     <!-- 
+     	实例工厂方法创建bean：
+     	将对象的创建过程封装到另外一个对象的实例方法中。
+     	当客户创建对象时，只要简单地调用该实例方法而不必要关心对象的创建细节。
+     	步骤：
+     		- 在bean的factory-bean属性里指定拥有该工厂方法的bean
+     		- 在factory-method属性里指定该工厂方法的名称
+     		- 使用constructor-arg元素为工厂方法传递参数
+      -->
+      <!-- 创建工厂实例 -->
+     <bean id="instanceCarFactory" class="com.adee.spring4.InstanceCarFactory"></bean>
+     <!-- 通过实例工厂方法创建Car bean -->
+     <bean id="car2" factory-bean="instanceCarFactory" factory-method="getCar">
+     	<constructor-arg value="ford"/>
+     </bean>
+     
+     <!-- 
+     	通过FactoryBean接口创建bean
+      -->
+      <bean id="car3" class="com.adee.spring4.CarFactoryBean">
+      	<property name="brand" value="BMW"/>
+      </bean>
+     
+     <!-- 
+     	组件扫描：
+     	1.spring能够从classpath下自动扫描、侦测和实例化具有特定注解的组件
+     	2.特定组件包括：
+     		- @Component：基本注解，标识了一个受spring管理的组件
+     		- @Repository：标识持久层组件
+     		- @Service：标识服务层（业务层）组件
+     		- @Controller：标识表现层组件
+     	3.对于扫描到的组件，spring有默认的命名策略：使用非限定类名，第一个字母小写，也可以在注解宏通过value属性值标识组件的名称
+     	4.	当在组件类上使用了特定的注解之后，还需要在spring的配置文件中声明
+     		<context:component-scan base-package="com.adee" resource-pattern="autowire/*.class"/> :
+     		- base-package 指定的包及其子包下的所有类都会被spring容器扫描到
+     		- 当需要扫描多个包时，可以使用逗号分隔
+     		- 如果仅希望扫描特定的类，而非base-package下所有的类，可使用resource-pattern属性过滤特定的类
+     		- <context:include-filter />子节点表示要包含的目标类
+     		- <context:exclude-filter />子节点表示排除在外的目标类
+     		- <context:component-scan />下可以拥有若干个<context:include-filter />和<context:exclude-filter />
+     	
+      -->
+      <!-- 
+      	过滤资源：
+      	只扫描com包下的spring4子包下的所有类，如下配置只会扫描com/spring4/xxx.class类文件
+      	注：
+      		1.spring4紧挨着com，形如com.xxx.spring4的包不会被扫描到
+      		2..class类文件紧挨着spring4，形如com/spring4/xxx/xxx.class的类文件不会被扫描到
+      		3.<context:component-scan />扫描器会在IOC阶段生效，就是说在bean生命周期的第一阶段（反向生成bean）的时候生效，
+      			被扫描到的类如果加了bean注解，就会生成bean实例（前提是单例），而没有扫描到的类就一定不是bean了吗？不是，
+      			在xml配置文件配置的bean当然也会生成bean实例（前提是单例）。只要是bean，就有bean生命周期的几个阶段（反向生成bean实例、
+      			属性注入、执行初始化方法、容器销毁回调销毁方法）
+       -->
+      <!-- <context:component-scan base-package="com" resource-pattern="spring4/*.class"/> -->
+      <!-- <context:component-scan base-package="com.adee" resource-pattern="spring4/controller/*.class"/> -->
+      
+      <!-- <tx:annotation-driven/> -->
+      
+      <!-- 
+      		4.我们还可以使用<context:include-filter/>或<context:exclude-filter />过滤资源，注意，二者不能同时用，否则启动报错。
+      		5.指使用<context:component-scan base-package="com.adee">，会递归扫描com/adee路径下所有.class类文件
+      		6.<context:include-filter/>的type有以下几种取值：
+      				Filter-Type	Examples-Expression						Description
+					annotation	org.example.SomeAnnotation	符合SomeAnnoation的target class
+					assignable		org.example.SomeClass				指定class或interface的全名
+					aspectj			org.example..*Service+				AspectJ語法
+					regex				org\.example\.Default.*				Regelar Expression
+					custom			org.example.MyTypeFilter			Spring3新增自訂Type，實作org.springframework.core.type.TypeFilter
+			7.use-default-filters默认为true，需要将use-default-filters="false"指定为false，所设置的filter才会生效。
+       -->
+       <context:component-scan base-package="com.adee"></context:component-scan>
+      <!-- <context:component-scan base-package="com.adee" use-default-filters="false">
+      	<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+      </context:component-scan> -->
+      <!-- <context:component-scan base-package="com.adee.spring4" use-default-filters="false">
+      	<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Component" />
+      </context:component-scan> -->
+     <!--  <context:component-scan base-package="com.adee.spring4" use-default-filters="false">
+      	<context:include-filter type="regex" expression="[.]+(/service/|/dao/)[.]+"/>
+      </context:component-scan> 
+      不扫描UserDao接口及其实现类，com.adee下的其他类全扫描:
+     <context:component-scan base-package="com.adee" use-default-filters="false">
+      	<context:include-filter type="assignable" expression="com.adee.spring4.dao.UserDao"/>
+      </context:component-scan> 
+      只扫描com.adee包下的UserDao接口及其实现类：
+     <context:component-scan base-package="com.adee" use-default-filters="false">
+      	<context:include-filter type="assignable" expression="com.adee.spring4.dao.UserDao"/>
+      </context:component-scan> 
+      -->
+      
+      <!-- 
+      	使AspectJ注解@Aspect、@Before、@After注解起作用，即被该注解中切面声明所匹配到的的bean生成代理对象
+      	@Before("execution(* com.adee.spring4.service.*.*(..))")
+       -->
+      <aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+      
+      <!-- 
+      	xml方式配置aop
+       
+       	配置切面bean 
+        <bean id="loggingAspect" class="com.adee.spring4.aspect.LoggingAspect"></bean>
+       	<aop:config>
+       		配置切点表达式 
+       		<aop:pointcut expression="execution(public * com.adee.spring4.service.*.*(..))" id="pointCut"/>
+       		
+       		 配置切面及通知 
+       		<aop:aspect ref="loggingAspect" order="1">
+       			<aop:before method="beforeMethod" pointcut-ref="pointCut"/>
+       			<aop:after method="afterMethod" pointcut-ref="pointCut"/>
+       			<aop:after-returning method="afterReturning" pointcut-ref="pointCut"/>
+       			<aop:after-throwing method="afterThrowing" pointcut-ref="pointCut"/>
+       		</aop:aspect>
+       	</aop:config>
+      -->
+      
+      <!-- 
+      		使用JdbcTemplate
+       -->
+      <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+      	<property name="dataSource" ref="dataSource" />
+      </bean>
+      
+      
+      <!-- 
+      		数据库事务：
+      		一、事务的四个属性ACID
+      			- 原子性（Atomic）：事务中的一系列操作要么全部成功，要么全部失败
+      			- 一致性（consistency）：事务被提交或回滚后，数据库的所有数据仍然满足要求，一致性是由原子性来保证的
+      			- 隔离性（isolation）：多个事务同时访问一个相同数据时，事务之间不会相互影响，隔离性是由锁来保证的
+      			- 持久性（durablility）：事务一旦提交，数据会同步到磁盘，不会再受系统错误的影响
+      		二、事务的隔离级别（由低到高）：
+      			1.读未提交
+      				现象：事务1中读到了事务2已经insert、update的数据，如果事务1回滚了，那么事务2读到的数据就是脏数据
+      				实现原理：insert、update操作不对行加锁
+      			2.读已提交
+      				现象：事务1中对一个select语句执行了两次，在这两次之间，事务2对该select结果集中的某条数据执行了update或delete了，
+      							那么，事务1中的这两次select记录就不一致了，这个现象叫做不可重复读。
+      				实现原理：一个事务中，只对进行insert、update、delete操作的行加行锁。
+      			3.可重复读
+      				现象：如上，事务1中对一个select语句执行了两次，在这两次之间，事务2对该select结果集执行了update或delete了，而事务1
+      							中的这两次select结果是完全一致的，因为事务1在执行第一次select时，对结果集生成了一个快照（版本），该快照中包含
+      							结果集中记录的当前状态，及时此时事务3修改了其中某些记录并提交，更新了记录的最新版本号，也不影响事务1中再次
+      							执行该select，只要事务1不提交或回滚，执行该select就只从快照中取记录。而当事务1完成（提交或回滚）后，快照会
+      							被删除。可见此实现方式几乎不会影响数据库的并发能力。这种实现称为MVCC（多版本并发控制）。
+      							但是，在事务的的两次select之间，事务2执行了insert，且insert的记录恰好符合select条件，所以在事务1第二次执行
+      							select时结果集记录数会增加，这个现象称为幻读，可重复读隔离级别不能避免幻读的发生。
+      							注：经测试，在mysql中，事务隔离级别为REPEATABLE-READ时，只执行两次select语句，没有任何insert、update、
+      									delete语句，在第一次执行select时就会开启事务，也就是说第一次select的时候就将结果集的每一行加了行锁，在
+      									执行commit前，不管该select执行多少次，结果都一样
+      				实现原理：可重复读隔离级别的实现是MVCC，为的是提高数据库的并发能力。而不是采用锁机制，如果采用锁机制，就会将
+      									首次select的行加读锁，造成其他事务update或delete这些行的时候阻塞等待，极大降低了并发能力。
+      			4.串行化
+      				现象：所有的事务按顺序执行，前一个事务提交或回滚后，下一个事务才开始执行
+      				实现原理：对涉及到的表加表锁。
+      			5.图示：
+      				隔离级别													脏读					不可重复读				幻读
+      				读未提交（read uncommited）		可能					可能							可能
+      				读已提交（read commited）				不可能				可能							可能
+      				可重复读（repeatable read）			不可能				不可能						可能
+      				串行化（serializable）							不可能				不可能						不可能			
+      								
+      		三、数据库中事务的默认隔离级别
+      			mysql - REPEATABLE-READ
+      			oracle- READ-COMMITED
+      			
+      		四、不可重复而读与幻读的区别
+		      		####不可重复读和幻读的区别####
+						很多人容易搞混不可重复读和幻读，确实这两者有些相似。但不可重复读重点在于update和delete，而幻读的重点在于insert。
+					如果使用锁机制来实现这两种隔离级别，在可重复读中，该sql第一次读取到数据后，就将这些数据加锁，其它事务无法修改这些数据，
+					就可以实现可重复读了。但这种方法却无法锁住insert的数据，所以当事务A先前读取了数据，或者修改了全部数据，事务B还是可以
+					insert数据提交，这时事务A就会发现莫名其妙多了一条之前没有的数据，这就是幻读，不能通过行锁来避免。需要Serializable隔离
+					级别 ，读用读锁，写用写锁，读锁和写锁互斥，这么做可以有效的避免幻读、不可重复读、脏读等问题，但会极大的降低数据库的并发
+					能力。
+						所以说不可重复读和幻读最大的区别，就在于如何通过锁机制来解决他们产生的问题。
+					上文说的，是使用悲观锁机制来处理这两种问题，但是MySQL、ORACLE、PostgreSQL等成熟的数据库，出于性能考虑，都是
+					使用了以乐观锁为理论基础的MVCC（多版本并发控制）来避免这两种问题。
+					
+					####悲观锁和乐观锁####
+					
+					•悲观锁
+						正如其名，它指的是对数据被外界（包括本系统当前的其他事务，以及来自外部系统的事务处理）修改持保守态度，因此，在整个
+					数据处理过程中，将数据处于锁定状态。悲观锁的实现，往往依靠数据库提供的锁机制（也只有数据库层提供的锁机制才能真正
+					保证数据访问的排他性，否则，即使在本系统中实现了加锁机制，也无法保证外部系统不会修改数据）。
+						在悲观锁的情况下，为了保证事务的隔离性，就需要一致性锁定读。读取数据时给加锁，其它事务无法修改这些数据。修改删除
+					数据时也要加锁，其它事务无法读取这些数据。
+					
+					•乐观锁
+						相对悲观锁而言，乐观锁机制采取了更加宽松的加锁机制。悲观锁大多数情况下依靠数据库的锁机制实现，以保证操作最大程度
+					的独占性。但随之而来的就是数据库性能的大量开销，特别是对长事务而言，这样的开销往往无法承受。
+						而乐观锁机制在一定程度上解决了这个问题。乐观锁，大多是基于数据版本（ Version ）记录机制实现。何谓数据版本？即为
+					数据增加一个版本标识，在基于数据库表的版本解决方案中，一般是通过为数据库表增加一个 “version” 字段来实现。读取出
+					数据时，将此版本号一同读出，之后更新时，对此版本号加一。此时，将提交数据的版本数据与数据库表对应记录的当前版本
+					信息进行比对，如果提交的数据版本号大于数据库表当前版本号，则予以更新，否则认为是过期数据。
+					
+					要说明的是，MVCC的实现没有固定的规范，每个数据库都会有不同的实现方式，这里讨论的是InnoDB的MVCC。
+			 五、autocommit
+			 		默认情况下，mysql的autocommit时开启的，即autocommit变量的值为1.
+			 		查看autocommit：show variables like '%autocommit%';
+			 		修改autocommit：
+			 			1.只在当前会话中关闭autocommit：set autocommt=0;
+       -->
+      <!-- 1.配置事务管理 -->
+      <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+      		<property name="dataSource" ref="dataSource"/>
+      </bean>
+      <!-- 启用事务注解（适用于注解方式） -->
+      <!-- <tx:annotation-driven transaction-manager="transactionManager"/> -->
+      <!-- 2.配置事务属性 -->
+      <tx:advice id="txAdvice" transaction-manager="transactionManager">
+      		<tx:attributes>
+      			<tx:method name="save*" isolation="DEFAULT" propagation="REQUIRED" 
+      										rollback-for="com.adee.spring4.exception.RollbackException"
+      										timeout="5" read-only="false"/>
+      			<tx:method name="update*" isolation="DEFAULT" propagation="REQUIRED" 
+      										rollback-for="com.adee.spring4.exception.RollbackException"
+      										timeout="5" read-only="false"/>
+      			<tx:method name="delete*" isolation="DEFAULT" propagation="REQUIRED" 
+      										rollback-for="com.adee.spring4.exception.RollbackException"
+      										timeout="5" read-only="false"/>
+      			<!-- 其他方法设置为只读 -->
+      			<tx:method name="*" isolation="DEFAULT" propagation="REQUIRED" 
+      										timeout="5" read-only="false"/>
+      		</tx:attributes>
+      </tx:advice>
+      <!-- 3.配置事务切入点，以及把事务切入点和事务属性关联起来 -->
+      <aop:config>
+      		<aop:pointcut expression="execution(* com.adee.spring4.service.*.*(..))" id="txPointCut"/>
+      		<aop:advisor advice-ref="txAdvice" pointcut-ref="txPointCut"/>
+      </aop:config>
+      
+      
+      
+      
+      
+      
+      
+      
+     
+     
+    
+    
+    
+	<import resource="dao.xml"/>
+	<import resource="service.xml"/>
+</beans>  

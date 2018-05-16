@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adee.mybatis.mappers.StudentMapper">
+	
+	
+	<!-- 
+		Mybatis二级缓存必须配置在某个具体的mapper下：
+		1.size:表示缓存中最多能容纳的元素数，默认是1024
+		2.flushInterval：定义缓存刷新周期，以毫秒计
+		3.eviction：定义缓存的移除机制，默认是LRU（least recently used 最近最少使用），还有FIFO（first in first out）
+		4.readonly：默认是false，如果是true的话，缓存只能读
+	 -->
+	<!-- <cache size="1024" flushInterval="60000" eviction="LRU" readOnly="false"/> -->
+	<!-- ehcach需要在classpath下配置ehcache.xml文件 -->
+	<cache type="org.mybatis.caches.ehcache.EhcacheCache" />
+	
+	<!-- 使用自定义缓存redis实现分布式缓存 -->
+	<!-- <cache type="com.adee.mybatis.cache.MybatisRedisCache" />  -->
+	
+	
+	
+	
+	<resultMap type="Student" id="StudentResult">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="age" column="age"/>
+		<result property="addressId" column="addressId"/>
+		<result property="gradeId" column="gradeId"/>
+		<result property="pic" column="pic"/>
+		<result property="remark" column="remark"/>
+	</resultMap>
+	
+	
+	
+	
+	<insert id="insertStudent" parameterType="Student">
+		insert into t_student (name, age, addressId, gradeId, pic, remark)
+		values (#{name}, #{age}, #{addressId}, #{gradeId}, #{pic}, #{remark});
+	</insert>
+	
+	
+	<select id="getStudentById" parameterType="Integer" resultMap="StudentResult">
+		select * from t_student where id=#{id}
+	</select>
+	
+	<select id="getStudent" resultMap="StudentResult">
+		<!-- param是内置参数 -->
+		select * from t_student where name like #{param1} and age=#{param2} 
+	</select>
+	
+	<!-- 逻辑分页 -->
+	<select id="getStudentsByPage" resultMap="StudentResult">
+		select * from t_student
+	</select>
+	
+	<!-- 物理分页 -->
+	<select id="getStudentsByPage2" parameterType="Map" resultMap="StudentResult" useCache="true" flushCache="false">
+		select * from t_student
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	<!-- 
+		Mybatis默认情况下，Mybatis启用一级缓存，即同一个SQLSession接口对象调用了相同的select语句，则直接会从
+		缓存放回结果，而不是再一次查询数据库。
+		开发者可以自己配置二级缓存，二级缓存是全局的。
+		
+		默认情况下，select使用缓存，insert、update、delete不适用缓存
+		select标签的userCache属性默认为true，所以使用缓存
+		
+	 -->
+	
+	
+	
+	
+</mapper> 

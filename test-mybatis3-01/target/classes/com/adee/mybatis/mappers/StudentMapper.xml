@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adee.mybatis.mappers.StudentMapper">
+	
+	<resultMap type="Student" id="StudentResult">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="age" column="age"/>
+		<association property="address"  column="addressId" 	select="com.adee.mybatis.mappers.AddressMapper.findById"/>
+		<association property="grade"  column="gradeId" 	select="com.adee.mybatis.mappers.GradeMapper.findById"/>
+	</resultMap>
+
+	
+	<insert id="add"  parameterType="Student"  >
+		insert into t_student values(null,#{name},#{age})
+	</insert>
+	
+	<update id="update" parameterType="Student" >
+		update t_student set name = #{name}, age = #{age} where id = #{id}
+	</update>
+	
+	<delete id="delete"  parameterType="Integer">
+		delete from t_student where id=#{id}
+	</delete>
+	
+	<select id="findById" resultType="Student" parameterType="Integer">
+		select id, name, age from t_student where id=#{id} 
+	</select>
+	
+	<select id="findAll" resultMap="StudentResult">
+		select id, name, age from t_student order by id asc
+	</select>
+	
+	<select id="findStudentWithAddress" resultMap="StudentResult" parameterType="Integer">
+		select 
+			ts.id, ts.name, ts.age, ts.addressId, ts.gradeId
+		from 
+			t_student ts
+		where 
+			ts.id=#{id}
+	</select>
+	
+	
+	<select id="findByGradeId" resultMap="StudentResult" parameterType="Integer">
+		select id, name, age, addressId, gradeId from t_student where gradeId=#{gradeId} 
+	</select>
+</mapper> 

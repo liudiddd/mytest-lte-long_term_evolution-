@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adee.mybatis.mappers.AddressMapper">
+
+	<resultMap type="Address" id="AddressResult">
+		<id property="id" column="id"/>
+		<result property="sheng" column="sheng"/>
+		<result property="shi" column="shi"/>
+		<result property="qu" column="qu"/>
+	</resultMap>
+	
+	
+	<select id="findById" resultType="Address" parameterType="Integer">
+		select id, sheng, shi, qu from t_address where id=#{id}
+	</select>
+	
+	
+	
+</mapper> 
