@@ -1,0 +1,10 @@
+一、springmvc步骤
+1.加入jar包
+
+2.在web.xml中配置DispatcherServlet
+
+3.加入Springmvc配置文件
+
+4.编写请求处理器controller
+
+5.编写视图

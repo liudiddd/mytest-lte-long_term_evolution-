@@ -1,7 +1,62 @@
-<!DOCTYPE web-app PUBLIC
- "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
- "http://java.sun.com/dtd/web-app_2_3.dtd" >
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	id="gw-web-boss" version="2.5">
 
 <web-app>
-  <display-name>Archetype Created Web Application</display-name>
+	<display-name>Archetype Created Web Application</display-name>
+	
+	<!-- 配置支持REST风格的filter，作用是可以把POST请求转换为DELETE或PUT请求 -->
+	<filter>
+		<filter-name>hiddenHttpMethodFilter</filter-name>
+		<filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>hiddenHttpMethodFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<!-- spring配置文件路径 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:applicationContext.xml</param-value>
+	</context-param>
+	
+	<!-- 配置spring4的listener -->
+	<listener>
+		<!-- <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class> -->
+		<listener-class>com.adee.myproject.listener.MySpringContextLoaderListener</listener-class>
+	</listener>
+
+  	<!-- 配置springmvc的DispatcherServlet -->
+  	<servlet>
+  		<servlet-name>springDispatcherServlet</servlet-name>
+  		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+  		<init-param>
+  			<!-- 
+  				如果没有配置springmvc的配置文件名称，默认路径和名称为：/WEB-INF/<servlet-name>-servlet.xml
+  			 -->
+  			<param-name>contextConfigLocation</param-name>
+  			<param-value>classpath:springmvc.xml</param-value>
+  		</init-param>
+  		<load-on-startup>1</load-on-startup>
+  	</servlet>
+  	<servlet>
+  		<servlet-name>SessionServlet</servlet-name>
+  		<display-name>SessionServlet</display-name>
+  		<description></description>
+  		<servlet-class>com.adee.myproject.servlet.SessionServlet</servlet-class>
+  	</servlet>
+  	
+  	<servlet-mapping>
+  		<servlet-name>springDispatcherServlet</servlet-name>
+  		<url-pattern>/</url-pattern>
+  	</servlet-mapping>
+  	<servlet-mapping>
+  		<servlet-name>SessionServlet</servlet-name>
+  		<url-pattern>/SessionServlet</url-pattern>
+  	</servlet-mapping>
+  
 </web-app>

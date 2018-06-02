@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    
+    <!-- 
+    MyBatis打印执行的SQL，只需要在mybatis-config.xml中配置一下logImpl即可
+	value的值可以是：
+	SLF4J
+	LOG4J
+	LOG4J2：一般设置这个
+	STDOUT_LOGGING ： 标准输出，打印在控制台上
+	NO_LOGGING
+	JDK_LOGGING
+	COMMONS_LOGGING
+     -->
+	<settings>
+		<setting name="lazyLoadingEnabled" value="true"/> <!-- 打开延迟加载开关 -->
+		<setting name="aggressiveLazyLoading" value="false"/> <!-- 将积极加载改为消极加载，即延迟加载 -->
+		<setting name="cacheEnabled" value="true"/> <!-- 开启二级缓存 -->
+		<setting name="logImpl" value="SLF4J"/>
+	</settings>
+	
+	<typeAliases>  
+        <package name="com.adee.myproject.module" />  
+    </typeAliases> 
+	
+	<!-- <plugins>  
+        <plugin interceptor="com.github.miemiedev.mybatis.paginator.OffsetLimitInterceptor">  
+            <property name="dialectClass" value="com.github.miemiedev.mybatis.paginator.dialect.MySQLDialect"/>  
+        </plugin> 
+    </plugins> -->
+	
+</configuration>

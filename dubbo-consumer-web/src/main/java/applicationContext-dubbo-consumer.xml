@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+	xmlns="http://www.springframework.org/schema/beans"   
+	xmlns:aop="http://www.springframework.org/schema/aop"  
+	xmlns:context="http://www.springframework.org/schema/context"   
+	xmlns:tx="http://www.springframework.org/schema/tx"  
+	xmlns:cache="http://www.springframework.org/schema/cache"   
+	xmlns:p="http://www.springframework.org/schema/p"  
+    xmlns:jee="http://www.springframework.org/schema/jee"  
+    xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"  
+    xmlns:util="http://www.springframework.org/schema/util"  
+    xmlns:configurator="http://cocoon.apache.org/schema/configurator"  
+    xmlns:avalon="http://cocoon.apache.org/schema/avalon"  
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+			http://www.springframework.org/schema/beans/spring-beans-4.3.xsd  
+			http://www.springframework.org/schema/aop  
+			http://www.springframework.org/schema/aop/spring-aop-4.3.xsd  
+			http://www.springframework.org/schema/context  
+			http://www.springframework.org/schema/context/spring-context-4.3.xsd  
+			http://www.springframework.org/schema/tx  
+			http://www.springframework.org/schema/tx/spring-tx-4.3.xsd  
+			http://www.springframework.org/schema/cache   
+			http://www.springframework.org/schema/cache/spring-cache-4.3.xsd
+			http://www.springframework.org/schema/util 
+			http://www.springframework.org/schema/util/spring-util-2.0.xsd  
+		    http://cocoon.apache.org/schema/configurator 
+		    http://cocoon.apache.org/schema/configurator/cocoon-configurator-1.0.1.xsd  
+		    http://code.alibabatech.com/schema/dubbo  
+		    http://code.alibabatech.com/schema/dubbo/dubbo.xsd  
+		    http://cocoon.apache.org/schema/avalon 
+		    http://cocoon.apache.org/schema/avalon/cocoon-avalon-1.0.xsd" default-lazy-init="false">  
+  	
+  	
+  	<!-- 消费方应用名，用于计算依赖关系，不是匹配条件，不要与提供方一样 -->
+	<dubbo:application name="myproject_dubbo_consumer" />
+
+	<!-- 使用zookeeper注册中心暴露服务地址 -->
+	<!-- 注册中心地址 -->
+	<dubbo:registry protocol="zookeeper" address="192.168.1.110:2181" />
+	
+	<!-- 用户服务接口 -->
+	<dubbo:reference interface="com.adee.myproject.service.EmployeeService" id="employeeService" check="false" />
+	<dubbo:reference interface="com.adee.myproject.service.DepartmentService" id="departmentService" check="false" />
+
+</beans>  

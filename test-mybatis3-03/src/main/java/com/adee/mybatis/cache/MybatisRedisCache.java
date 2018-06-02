@@ -14,8 +14,8 @@ import org.slf4j.LoggerFactory;
  * @author Administrator
  *
  */
-public class MybatisRedisCache implements Cache{
-	 private static final Logger LOG = LoggerFactory.getLogger(MybatisRedisCache.class);   
+public class MybatisRedisCache /*implements Cache*/{
+	 /*private static final Logger LOG = LoggerFactory.getLogger(MybatisRedisCache.class);   
      
 	    private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock(true);  
 	      
@@ -89,5 +89,5 @@ public class MybatisRedisCache implements Cache{
 	    @Override  
 	    public ReadWriteLock getReadWriteLock() {  
 	        return this.readWriteLock;  
-	    }  
+	    }  */
 }

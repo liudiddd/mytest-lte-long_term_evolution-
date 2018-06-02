@@ -1,0 +1,46 @@
+一、https原理
+https://blog.csdn.net/u013424496/article/details/51161370
+
+二、tomcat配置https步骤
+
+1.创建tomcat证书
+
+这里使用JDK自带的keytool工具来生成证书：
+
+1.1. 在jdk的安装目录\bin\keytool.exe下打开keytool.exe
+
+1.2. 在命令行中输入以下命令:
+
+keytool -genkeypair -alias "tomcat" -keyalg "RSA" -keystore "g:\tomcat.keystore"  
+以上命令将生产一对非对称密钥和自我签名的证书d:\tomcat.keystore
+
+注意：“名字与姓氏”应该是域名，输成了姓名，和真正运行的时候域名不符，会出问题
+
+这里我输入的密码是123456,  域名是以tomcat为例,  省市以广东深圳为例
+
+2.配置tomcat服务器
+
+定位到tomcat服务器的安装目录, 找到conf下的server.xml文件
+
+1 <!--
+2     <Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
+3                maxThreads="150" scheme="https" secure="true"
+4                clientAuth="false" sslProtocol="TLS" />
+5     --> 
+
+去掉注释，修改为：
+
+1 <Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"  
+2               maxThreads="150" scheme="https" secure="true"  
+3               clientAuth="false" sslProtocol="TLS"   
+4        keystoreFile="g:\tomcat.keystore"  
+5        keystorePass="123456" />  
+
+在互联网上, http协议的默认端口是80, https的默认端口是443, 这里将端口改为了443
+
+3.启动tomcat服务器
+
+在IE浏览器中输入: https://localhost
+
+
+
